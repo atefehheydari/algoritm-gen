@@ -8,9 +8,6 @@ Original file is located at
 """
 
 def add_student(students_dict, student_id, name, courses):
-    """
-    اضافه کردن دانشجو به دیکشنری دانشجویان
-    """
     students_dict[student_id] = {
         'name': name,
         'courses': courses,
@@ -19,47 +16,40 @@ def add_student(students_dict, student_id, name, courses):
     print(f"دانشجو {name} با موفقیت اضافه شد!")
 
 def add_grade(students_dict, student_id, course, grade):
-    """
-    اضافه کردن نمره به دانشجوی خاص در یک درس
-    """
     if student_id in students_dict:
-        students_dict[student_id]['grades'][course] = grade
-        print(f"نمره {grade} برای درس {course} ثبت شد.")
+        if 0 <= grade <= 20:  # شرط برای نمره
+            students_dict[student_id]['grades'][course] = grade
+            print(f"نمره {grade} برای درس {course} ثبت شد.")
+        else:
+            print("نمره باید بین 0 تا 20 باشد!")
     else:
         print("دانشجو یافت نشد!")
 
 def calculate_average(students_dict, student_id):
-    """
-    محاسبه معدل دانشجو بر اساس نمرات موجود
-    """
     if student_id in students_dict:
         grades = students_dict[student_id]['grades'].values()
         if not grades:
-            return 0
+            print("این دانشجو هنوز نمره‌ای ندارد.")
+            return None
         average = sum(grades) / len(grades)
         return average
     else:
+        print("دانشجو یافت نشد!")
         return None
 
 def find_top_student(students_dict):
-    """
-    یافتن دانشجوی برتر بر اساس معدل
-    """
     top_student = None
     highest_avg = -1
 
     for student_id, info in students_dict.items():
         avg = calculate_average(students_dict, student_id)
-        if avg > highest_avg:
+        if avg is not None and avg > highest_avg and info['grades']:
             highest_avg = avg
             top_student = info['name']
 
     return top_student, highest_avg
 
 def filter_passed_courses(students_dict, student_id, passing_grade=10):
-    """
-    فیلتر کردن دروس قبولی یک دانشجو
-    """
     if student_id in students_dict:
         passed_courses = [
             course for course, grade in students_dict[student_id]['grades'].items()
